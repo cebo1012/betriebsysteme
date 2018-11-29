@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-
+#include "myFile.h"
 using namespace std;
 class myRoot {
 private:
@@ -10,9 +10,9 @@ private:
 public:
 	//TODO KONSTRUKTOR DESTRUKTOR
 
-	void addFile(string name, off_t size, mode_t mode);
-	void deleteFile(string name);
-	myFile getFile(string name, myFile* file);
+	int addFile(string name, off_t size, mode_t mode);
+	int deleteFile(string name);
+	int getFile(string name, myFile* file);
 };
 
 

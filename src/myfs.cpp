@@ -18,7 +18,7 @@
 #include "macros.h"
 #include "myfs.h"
 #include "myfs-info.h"
-
+using namespace std;
 
 
 MyFS* MyFS::_instance = NULL;
@@ -48,12 +48,15 @@ int MyFS::fuseGetattr(const char *path, struct stat *st) {
 
 	myFile fcopy;
 	if(root.getFile(path,&fcopy)==-1)
-		RETURN(-1); //TODO: richtigen Fehlecode zurueckgeben
+		{//TODO: richtigen Fehlecode zurueckgeben
+		LOGM("can't get file from root root.getFile(path, &fcopy)");
+		RETURN(-1);
+		}
 
 	st->st_uid = getuid(); // The owner of the file/directory is the user who mounted the filesystem
 	st->st_gid = getgid(); // The group of the file/directory is the same as the group of the user who mounted the filesystem
 	st->st_atime = time(NULL); // The last "a"ccess of the file/directory is right now
-	st->st_mtime = fcopy.lastMod; // The last "m"odification of the file/directory is right now
+	st->st_mtime = fcopy.getLastMod(); // The last "m"odification of the file/directory is right now
 	st->st_ctime = time(NULL);
 
 	if (strcmp(path, "/") == 0)
@@ -67,12 +70,13 @@ int MyFS::fuseGetattr(const char *path, struct stat *st) {
 
 		st->st_mode = S_IFREG | 0444;
 		st->st_nlink = 1;
-		st->st_size = fcopy.size; //Tanja's comments: What is file's size???
+		st->st_size = fcopy.getSize();
 
 	}
 
 
     RETURN(0);
+
 }
 
 
@@ -93,7 +97,9 @@ int MyFS::fuseMknod(const char *path, mode_t mode, dev_t dev) { //??? wir brauch
 	// add new file to the Root
 	// Information about the file is saved in the objekt File 
 	// dev_t dev muss ID von unsere file system sein
-	root.addFile(path, 512, S_IFREG | 0444);
+
+	if(root.addFile(path, 512, S_IFREG | 0444)==-1)
+		RETURN("can't add file in root root.addFile(path, 512, S_IFREG | 0444)");
 
 	RETURN(0);
 }
@@ -109,15 +115,22 @@ int MyFS::fuseUnlink(const char *path) {
 	//2 set bloks unused (change FAT, this changes are executed in Dmap.setUnused funktion)
 	
 	myFile fcopy;
-	root.getFile(path, &fcopy);
+	if(root.getFile(path, &fcopy)==-1)
+		RETURN("can't get file from root root.getFile(path, &fcopy)");
 
-	root.deleteFile(path);
-	
-	for (int current = fcopy.firstBlock;
-		current != NULL; current = next)
+
+	if(root.deleteFile(path)==-1)
+		RETURN("CAN't delete file from root root.deleteFile(path)");
+
+	int next;
+	for (int current = fcopy.getFirstBlock();
+		current != -1&&current<fat.getSize(); current = next)
 	{
-		int next = fat.table[current]
-		dMap.setUnused(current); // Changes in Fat : unLink(current)
+		if(next = fat.getNext(current)==-1)
+			RETURN("can't get next file from fat  fat.getNext(current)");
+
+		dMap.setUnused(current);
+		fat.unLink(current);
 	}
 		
     

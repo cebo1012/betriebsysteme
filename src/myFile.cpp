@@ -39,5 +39,5 @@ myFile::myFile() {
 	lastAccess = time(NULL);//Zeitpunkt letzter Zugriff (atime)
 	lastMod = time(NULL);//letzte Ver�nderung (mtime)
 	lastStatusChange = time(NULL);//letzter Status�nderung (ctime)
-	firstBlock = NULL;//Zeiger auf ersten Block (u_int32_t BlockNo)
+	firstBlock = -1;//Zeiger auf ersten Block (u_int32_t BlockNo)
 }

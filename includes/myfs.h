@@ -24,7 +24,7 @@
 #include "dMap.h"
 #include "fat.h"
 #include "root.h"
-#include "myFile.h"
+//#include "myFile.h"
 
 
 class MyFS {

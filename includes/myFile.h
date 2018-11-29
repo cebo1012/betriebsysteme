@@ -1,8 +1,9 @@
+#pragma once
 #include <string>
 #include <stdlib.h>
 using namespace std;
 
-class myFile {
+class myFile{
 private:
 	string name;//Dateiname
 	uid_t user;//Benutzer
@@ -20,4 +21,7 @@ public:
 	myFile();
 
 	~myFile();
+	time_t getLastMod(){return lastMod;}
+	off_t getSize(){return size;}
+	int getFirstBlock(){return firstBlock;}
 };

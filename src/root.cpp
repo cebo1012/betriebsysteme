@@ -11,7 +11,7 @@ void myRoot::addFile(string name, off_t size, mode_t mode) {
 	files = copyfile.clone();
 }
 
-void myRoot::deleteFile(string name) {
+int myRoot::deleteFile(string name) {
 	myFile filetodelete = getFile(name);
 	//In Root Verzeichnis Datei loeschen
 	int i = 0;
@@ -21,14 +21,14 @@ void myRoot::deleteFile(string name) {
 	//Nachfolgende Elemente um eine Stelle nach hinten kopieren und ueberschreiben und
 	//dabei in ein anderes Array kopieren um anschlie�end die Laenge von Files zu verkuerzen
 	int indexfiles = i;
-	File array[sizeof(files) - 1];
+	myFile array[sizeof(files) - 1];
 	for (int indexarray = 0; index < sizeof(files - 1) && indexarray < sizeof(array - 1); index++, indexarray++) {
 		files[index] = files[index + 1];
 		array[indexarray] = files[indexarray];
 	}
 	//Laenge von Files um eins verkuerzen --- Falls Blockanzahl nicht konstant
 	//std::array<myFile,> a = { 1,2,3 };	
-
+return 0;
 }
 myFile ROOT::getFile(string name) {
 	int i = 0;
