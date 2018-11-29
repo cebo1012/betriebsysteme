@@ -100,10 +100,8 @@ int MyFS::fuseMknod(const char *path, mode_t mode, dev_t dev) { //??? wir brauch
 
 	if(root.addFile(path, 512, S_IFREG | 0444)==-1)
 		{
-		RETURN(-1);
-
 		printf("can't add file in root root.addFile(path, 512, S_IFREG | 0444)");
-
+		RETURN(-1);
 		}
 
 	RETURN(0);
@@ -122,15 +120,15 @@ int MyFS::fuseUnlink(const char *path) {
 	myFile fcopy;
 	if(root.getFile(path, &fcopy)==-1)
 		{
-		RETURN(-1);
 		printf("can't get file from root root.getFile(path, &fcopy)");
+		RETURN(-1);
 		}
 
 
 	if(root.deleteFile(path)==-1)
 	{
-		RETURN(-1);
 		printf("CAN't delete file from root root.deleteFile(path)");
+		RETURN(-1);
 	}
 	int next;
 	for (int current = fcopy.getFirstBlock();
@@ -138,20 +136,22 @@ int MyFS::fuseUnlink(const char *path) {
 	{
 		if(fat.getNext(current, &next)==-1)
 			{
-			RETURN(-1);
 			printf("can't get next file from fat  fat.getNext(current)");
+			RETURN(-1);
 			}
 
 		if(dMap.setUnused(current)==-1)
 		{
-			RETURN(-1);
+
 			printf("can't set unused in dmap dMap.setUnused(current)");
-					}
+			RETURN(-1);
+		}
 
 		if(fat.unLink(current)==-1)
 		{
-			RETURN(-1);
+
 			printf("can't unlink in fat fat.unLink(current)");
+			RETURN(-1);
 							}
 	}
 		
