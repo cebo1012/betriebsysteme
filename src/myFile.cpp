@@ -27,3 +27,17 @@ myFile::~myFile() {//
 	delete[] lastStatusChange;//letzter Status�nderung (ctime)
 	delete[] firstBlock;//Zeiger auf ersten Block*/
 }
+
+//Define the constructor
+//TODO FEHLE FINDEN
+myFile::myFile() {
+	name = "";//Dateiname
+	user = "";//Benutzer
+	group = NULL;//Gruppen-ID
+	size = NULL;//Dateigroesse
+	mode = NULL;//Zugriffsberechtigung
+	lastAccess = time(NULL);//Zeitpunkt letzter Zugriff (atime)
+	lastMod = time(NULL);//letzte Ver�nderung (mtime)
+	lastStatusChange = time(NULL);//letzter Status�nderung (ctime)
+	firstBlock = NULL;//Zeiger auf ersten Block (u_int32_t BlockNo)
+}

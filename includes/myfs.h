@@ -12,7 +12,10 @@
 #include <fuse.h>
 #include <cmath>
 #include <string.h>
+#include <unistd.h>
 #include <sys/types.h>
+
+
 
 #include "blockdevice.h"
 #include "myfs-structs.h"
@@ -21,6 +24,8 @@
 #include "dMap.h"
 #include "fat.h"
 #include "root.h"
+#include "myFile.h"
+
 
 class MyFS {
 private:
@@ -34,7 +39,7 @@ public:
 		static Dmap dMap;
 		static myFAT fat;
 		static myRoot root;
-		static BlockDevice bloks;
+		static BlockDevice blocks;
 		
     
     MyFS();
@@ -84,7 +89,7 @@ public:
     // TODO: Add methods of your file system here
 		
 		// int fuseCreate(const char *, mode_t, struct fuse_file_info *);
-		void addFile(const char *, mode_t mode, struct fuse_file_info *);
+    	void addFile(const char * name, mode_t mode, off_t size);
 		
 		//int fuseUnlink(const char *path);
 		void deleteFile(const char *path);

@@ -16,9 +16,10 @@
 #define DEBUG_RETURN_VALUES
 
 #include "macros.h"
-
 #include "myfs.h"
 #include "myfs-info.h"
+
+
 
 MyFS* MyFS::_instance = NULL;
 
@@ -42,8 +43,8 @@ MyFS::~MyFS() {
 int MyFS::fuseGetattr(const char *path, struct stat *st) {
     LOGM();
     //TODO
-	printf("[getattr] Called\n");
-	printf("\tAttributes of %s requested\n", path);
+	//printf("[getattr] Called\n");
+	//printf("\tAttributes of %s requested\n", path);
 
 	myFile fcopy;
 	if(root.getFile(path,&fcopy)==-1)
@@ -74,10 +75,7 @@ int MyFS::fuseGetattr(const char *path, struct stat *st) {
     RETURN(0);
 }
 
-int MyFS::fuseReadlink(const char *path, char *link, size_t size) {
-    LOGM();
-    return 0;
-}
+
 
 
 int MyFS::fuseMknod(const char *path, mode_t mode, dev_t dev) { //??? wir brauchen das nicht
@@ -116,9 +114,9 @@ int MyFS::fuseUnlink(const char *path) {
 	root.deleteFile(path);
 	
 	for (int current = fcopy.firstBlock;
-		current != null; current = next)
+		current != NULL; current = next)
 	{
-		int next = _fat.table[current]
+		int next = fat.table[current]
 		dMap.setUnused(current); // Changes in Fat : unLink(current)
 	}
 		
@@ -312,8 +310,8 @@ void MyFS::addFile(const char * name, mode_t mode, off_t size)
 			dMap.setUsed(i);
 			fat.link(blocks[i], blocks[i+1]);
 
-			char *buffer; // wofuer brauchen wir buffer hier
-		    if( write(i, buffer)!=0)
+			//char *buffer; // wofuer brauchen wir buffer hier
+		    if( this->blocks.write(i, "try")==-1)
 		    {
 		    	//fehlermeldung
 		    }
@@ -346,7 +344,7 @@ void MyFS::deleteFile(const char *name)
 //int fuseRead(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fileInfo);
 int MyFS::readFile(const char *name, char *buffer, size_t size, off_t offset, struct fuse_file_info *fi)
 {
-	return fuseRead(path, buf,  size,  offset, fileInfo);
+	return fuseRead(name, buffer,  size,  offset, fi);
 }
 
 //////////////////////////Todos end////////////////////////////////////////////////////////////////////
@@ -385,7 +383,10 @@ int MyFS::fuseChown(const char *path, uid_t uid, gid_t gid) {
     LOGM();
     return 0;
 }
-
+int MyFS::fuseReadlink(const char *path, char *link, size_t size) {
+    LOGM();
+    return 0;
+}
 int MyFS::fuseTruncate(const char *path, off_t newSize) {
     LOGM();
     return 0;
