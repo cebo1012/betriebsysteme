@@ -20,8 +20,10 @@ public:
 	//returns -1 if no more bloks avalible
 // todo unsigned wegmachen
 	int getFreeBlocks(unsigned int neededBlocks,  int* returnArray[]);
-	void setUsed(unsigned int blockNumber);
+	//void setUsed(unsigned int blockNumber);
+	int setUsed(unsigned int blockNumber);
 
-	void setUnused(unsigned int blockNumber);
+	//void setUnused(unsigned int blockNumber);
+	int setUnused(unsigned int blockNumber);
 
 };

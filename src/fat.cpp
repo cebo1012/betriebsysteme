@@ -1,17 +1,24 @@
 
-int  myFAT::unLink ( int currentNo){ //todo fehle behandeln + header bearbeiten
-	table[currentNo]=-1;
+int  myFAT::unLink ( int current){ //todo fehle behandeln + header bearbeiten
+	if(*current>=size||*current<0)
+	return-1;
+	else
+	table[current]=-1;
 	return 0;
 
 }
 
- int myFAT::link (int currentNo, int nextNo) {
-	 table[currentNo]=nextNo;
+ int myFAT::link (int current, int next) {
+
+	 if(*next>=size||*next<0||*current>=size||*current<0)
+	 return-1;
+	 else
+	 table[current]=next;
 	 return 0;
 }
 
  int myFAT::getNext(int current, int*next) {
- 	 if(*next>=size||*next<0)
+ 	 if(*next>=size||*next<0||*current>=size||*current<0)
  		 return-1;
  	 else
  		 *next=current;

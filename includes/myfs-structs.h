@@ -15,6 +15,6 @@
 #define NUM_OPEN_FILES 64
 
 // TODO: Add structures of your file system here
-#define BLOCK_NUMBER 60000
+
 
 #endif /* myfs_structs_h */

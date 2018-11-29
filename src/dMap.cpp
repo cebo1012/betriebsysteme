@@ -40,14 +40,21 @@ int Dmap::getFreeBlocks(unsigned int neededBlocks,  int* returnArray[]) {
 
 
 
-void Dmap::setUsed(unsigned int blockNumber) {
+int Dmap::setUsed(unsigned int blockNumber) {
+
+	if(blockNumber>dmapLength||blockNumber<0)
+		return -1;
 
 	dmap[blockNumber] = 1;
+	return 0;
 
 }
 
 
-void Dmap::setUnused(unsigned int blockNumber) {
+int Dmap::setUnused(unsigned int blockNumber) {
+
+	if(blockNumber>dmapLength||blockNumber<0)
+			return -1;
 
 	dmap[blockNumber] = 0;
 
@@ -59,5 +66,7 @@ void Dmap::setUnused(unsigned int blockNumber) {
 		firstFreeBlock = blockNumber;
 
 	}
+
+	return 0;
 
 }

@@ -89,10 +89,10 @@ public:
     // TODO: Add methods of your file system here
 		
 		// int fuseCreate(const char *, mode_t, struct fuse_file_info *);
-    	void addFile(const char * name, mode_t mode, off_t size);
+    	int addFile(const char * name, mode_t mode, off_t size);
 		
 		//int fuseUnlink(const char *path);
-		void deleteFile(const char *path);
+		int deleteFile(const char *path);
 		
 		//int fuseRead(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fileInfo);
 		int readFile(const char *name, char *buffer, size_t size, off_t offset, struct fuse_file_info *fi);

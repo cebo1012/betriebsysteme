@@ -15,6 +15,7 @@
 #include <cstdint>
 
 #define BD_BLOCK_SIZE 512
+#define BLOCK_NUMBER 60000
 
 class BlockDevice {
 private:

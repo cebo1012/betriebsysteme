@@ -49,7 +49,7 @@ int MyFS::fuseGetattr(const char *path, struct stat *st) {
 	myFile fcopy;
 	if(root.getFile(path,&fcopy)==-1)
 		{//TODO: richtigen Fehlecode zurueckgeben
-		LOGM("can't get file from root root.getFile(path, &fcopy)");
+		printf("can't get file from root root.getFile(path, &fcopy)");
 		RETURN(-1);
 		}
 
@@ -99,7 +99,12 @@ int MyFS::fuseMknod(const char *path, mode_t mode, dev_t dev) { //??? wir brauch
 	// dev_t dev muss ID von unsere file system sein
 
 	if(root.addFile(path, 512, S_IFREG | 0444)==-1)
-		RETURN("can't add file in root root.addFile(path, 512, S_IFREG | 0444)");
+		{
+		RETURN(-1);
+
+		printf("can't add file in root root.addFile(path, 512, S_IFREG | 0444)");
+
+		}
 
 	RETURN(0);
 }
@@ -116,21 +121,38 @@ int MyFS::fuseUnlink(const char *path) {
 	
 	myFile fcopy;
 	if(root.getFile(path, &fcopy)==-1)
-		RETURN("can't get file from root root.getFile(path, &fcopy)");
+		{
+		RETURN(-1);
+		printf("can't get file from root root.getFile(path, &fcopy)");
+		}
 
 
 	if(root.deleteFile(path)==-1)
-		RETURN("CAN't delete file from root root.deleteFile(path)");
-
+	{
+		RETURN(-1);
+		printf("CAN't delete file from root root.deleteFile(path)");
+	}
 	int next;
 	for (int current = fcopy.getFirstBlock();
 		current != -1&&current<fat.getSize(); current = next)
 	{
-		if(next = fat.getNext(current)==-1)
-			RETURN("can't get next file from fat  fat.getNext(current)");
+		if(fat.getNext(current, &next)==-1)
+			{
+			RETURN(-1);
+			printf("can't get next file from fat  fat.getNext(current)");
+			}
 
-		dMap.setUnused(current);
-		fat.unLink(current);
+		if(dMap.setUnused(current)==-1)
+		{
+			RETURN(-1);
+			printf("can't set unused in dmap dMap.setUnused(current)");
+					}
+
+		if(fat.unLink(current)==-1)
+		{
+			RETURN(-1);
+			printf("can't unlink in fat fat.unLink(current)");
+							}
 	}
 		
     
@@ -156,7 +178,8 @@ int MyFS::fuseOpen(const char *path, struct fuse_file_info *fileInfo) { // How t
 	}
 
 	else cout << "Unable to open file";*/
-	if(blocks.open(path)!=0) return -1;
+
+	if(blocks.open(path)==-1) RETURN(-1);
 
 	RETURN(0);
     //RETURN(-1);
@@ -168,46 +191,43 @@ int MyFS::fuseRead(const char *path, char *buf, size_t size, off_t offset, struc
     // TODO: Implement this!
 	if (offset > size) // not possible
 		RETURN(-1);
+
 	char * buffer;
 	
-	myFile fcopy = root.getFile(name);
-	int blocksNumber = ceil(fcopy.size / BD_BLOCK_SIZE);
-	int currentBlock = fcopy.firstBlock;
-	while (currentBlock != 0)
+	myFile fcopy;
+	if(root.getFile(path, &fcopy)==-1)
+	{
+			RETURN(-1);
+			printf("can't get file from root root.getFile(path, &fcopy)");
+	}
+
+	int blocksNumber = ceil(fcopy.getSize() / BD_BLOCK_SIZE);
+	int currentBlock = fcopy.getFirstBlock();
+
+	while (currentBlock != -1&&blocksNumber!=0)
 	{
 		if( blocks.read(currentBlock, buffer)==0)
 		{
-			while (*buffer != NULL)
+			while (*buffer != '\n')
 				*(++buf) = *(buffer++);
 		}
 		else
 		{
-		//mistake
+			printf("error in fuseREAD blocks.read(currentBlock, buffer) ");
 			RETURN(-1);
 		}
-		currentBlock = fat.table[currentBlock];
 
-		
+		if(fat.getNext(currentBlock,&currentBlock)==-1)
+		{
+			printf("error in fuseREAD fat.getNext(currentBlock,&currentBlock)");
+		RETURN(-1);
+		}
+
+		blocksNumber--;
 	}
 	
 	RETURN(0);
-	
-	/*
 
-
-	printf("--> Trying to read %s, %u, %u\n", path, offset, size);
-	string line;
-	ifstream myfile(path);
-	if (myfile.is_open())
-	{
-		while (getline(myfile, line))
-		{
-			line.copy(buf, offset, size - offset);
-			*(++buf) = '\n';
-		}
-		myfile.close();
-		RETURN(0);
-	}*/
 }
 
 int MyFS::fuseWrite(const char *path, const char *buf, size_t size, off_t offset, struct fuse_file_info *fileInfo) {
@@ -235,7 +255,7 @@ int MyFS::fuseOpendir(const char *path, struct fuse_file_info *fileInfo) { // Is
     RETURN(0);
 }
 
-int MyFS::fuseReaddir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fileInfo) {
+int MyFS::fuseReaddir(const char *path, void *buffer, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fileInfo) {
     LOGM();
     
     // TODO: Implement this!
@@ -247,8 +267,18 @@ int MyFS::fuseReaddir(const char *path, void *buf, fuse_fill_dir_t filler, off_t
 
 	if (strcmp(path, "/") == 0) // If the user is trying to show the files/directories of the root directory show the following
 	{
-		for(int i=1;_root.files[i]!=null;i++)
-		filler(buffer, root.files[i].name, NULL, 0);
+		for(int i=1; root.getFileTry(i)!=-1;i++)
+		{
+		//convert from string to char. Do we need string?
+			char *name = new char[root.getFile(i).getName().length() + 1];
+			strcpy(name, root.getFile(i).getName().c_str());
+		//////////////////////////////////////////////////////////////////////
+
+		filler(buffer, name , NULL, 0);
+		delete [] name;
+
+		}
+
 	}
 	else
 	{
@@ -257,7 +287,7 @@ int MyFS::fuseReaddir(const char *path, void *buf, fuse_fill_dir_t filler, off_t
 	}
 
 
-    
+
     RETURN(0);
     
     // <<< My new code
@@ -277,10 +307,6 @@ int MyFS::fuseCreate(const char *path, mode_t mode, struct fuse_file_info *fileI
     
     // TODO: Implement this!
 
-	//Tanja's comments
-	//
-	//
-	//
     
     RETURN(0);
 }
@@ -310,7 +336,7 @@ void* MyFS::fuseInit(struct fuse_conn_info *conn) { // What schould we do hier? 
 }
 
 // int fuseCreate(const char *, mode_t, struct fuse_file_info *);
-void MyFS::addFile(const char * name, mode_t mode, off_t size)
+int MyFS::addFile(const char * name, mode_t mode, off_t size)
 {
 	int blocksNumber = ceil(size / BD_BLOCK_SIZE);
 	int*  blocks = new int[blocksNumber+1];
@@ -326,29 +352,48 @@ void MyFS::addFile(const char * name, mode_t mode, off_t size)
 			//char *buffer; // wofuer brauchen wir buffer hier
 		    if( this->blocks.write(i, "try")==-1)
 		    {
-		    	//fehlermeldung
+		    	printf("error in addFile in this->blocks.write(i, \"try\")");
 		    }
 		}
 	}
 	else
 	{
+		printf("error in addFile no free blocks in dmap");
+		RETURN(-1);
 		//no more place
 	}
+	RETURN(0);
 }
 
 //int fuseUnlink(const char *path);
-void MyFS::deleteFile(const char *name)
+int MyFS::deleteFile(const char *name)
 {
 	myFile fcopy;
-	root.getFile(name, &fcopy);
-	root.deleteFile(name);
-	int blocksNumber = ceil(fcopy.size / BD_BLOCK_SIZE);
-	int currentBlock = fcopy.firstBlock;
-	while (currentBlock != 0)
+	if(root.getFile(name, &fcopy)==-1||
+	root.deleteFile(name)==-1)
 	{
-		dmap.setUnused(currentBlock);
-		currentBlock = fat.table[currentBlock];
+	printf("error in deleteFeil in root.getFile(name, &fcopy)==-1||root.deleteFile(name)==-1");
+			RETURN(0);
+	}
 
+	int blocksNumber = ceil(fcopy.getSize() / BD_BLOCK_SIZE);
+	int currentBlock = fcopy.getFirstBlock();
+
+	while (blocksNumber!=0&&currentBlock!=-1)
+	{
+		if(dMap.setUnused(currentBlock)==-1)
+		{
+			printf("error in deleteFile in dmap.setUnused(currentBlock)");
+			RETURN(-1);
+		}
+
+		if(fat.getNext(currentBlock, &currentBlock)==-1)
+		{
+			printf("error in deleteFeil in fat.getNext(currentBlock, &currentBlock");
+			RETURN(-1);
+		}
+
+		blocksNumber--;
 	}
 
 

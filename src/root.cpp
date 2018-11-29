@@ -38,3 +38,17 @@ myFile ROOT::getFile(string name) {
 	return files[i];
 }
 
+//Tanja add: i need it to have a list from all files
+myFile myRoot::getFile(int n) {
+
+	return files[n];
+}
+
+int myRoot::getFileTry(int n) {
+
+	//if file exist return 0
+	// not exist return -1
+	return 0;
+
+}
+

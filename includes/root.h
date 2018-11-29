@@ -13,6 +13,8 @@ public:
 	int addFile(string name, off_t size, mode_t mode);
 	int deleteFile(string name);
 	int getFile(string name, myFile* file);
+	int getFileTry(int number);
+	myFile getFile(int number);
 };
 
 

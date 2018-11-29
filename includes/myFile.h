@@ -24,4 +24,5 @@ public:
 	time_t getLastMod(){return lastMod;}
 	off_t getSize(){return size;}
 	int getFirstBlock(){return firstBlock;}
+	string getName(){return name;}
 };
