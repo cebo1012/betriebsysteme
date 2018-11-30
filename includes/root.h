@@ -5,16 +5,19 @@
 using namespace std;
 class MyRoot {
 private:
-	MyFile files[BLOCK_NUMBER];
+	std::list<MyFile> files;
 	MyFile* addressRoot;
 
 public:
 	//TODO KONSTRUKTOR DESTRUKTOR
-	MyRoot();
+	MyRoot(MyFile firstfile);
+	MyRoot(string name, off_t size, mode_t mode);
 	~MyRoot();
+	
 	int addFile(string name, off_t size, mode_t mode);
 	int deleteFile(string name);
 	int getFile(string name, MyFile* file);
+	
 	int getFileTry(int number);
 	MyFile getFile(int number);
 };
