@@ -10,7 +10,8 @@ private:
 
 public:
 	//TODO KONSTRUKTOR DESTRUKTOR
-
+	MyRoot();
+	~MyRoot();
 	int addFile(string name, off_t size, mode_t mode);
 	int deleteFile(string name);
 	int getFile(string name, MyFile* file);
