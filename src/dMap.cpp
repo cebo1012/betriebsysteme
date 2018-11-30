@@ -1,13 +1,21 @@
-﻿﻿
-#include "dMap.h"
-#include "blockdevice.h"
+﻿#include "dMap.h"
+//#include "blockdevice.h"
 dMap::dMap() {
 
 	//Blockno 0 is not used
+	for (int i = 0; i <= BLOCK_NUMBER; i++)
+			dmap[i]=0;
 	firstFreeBlock = 1;
+	printf("Konstruktor von dMap ist beendet");
 }
 
+dMap::~dMap() {
 
+	//Blockno 0 is not used
+	for (int i = 0; i <= BLOCK_NUMBER; i++)
+		dmap[i]=-1;
+	printf("Destruktor von dMap ist beendet");
+}
 
 int dMap::getFreeBlocks(int neededBlocks,  int* returnArray[]) {
 

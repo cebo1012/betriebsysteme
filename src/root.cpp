@@ -1,5 +1,5 @@
 // TODO LinkedList, bibliotheken anschauen
-void myRoot::addFile(string name, off_t size, mode_t mode) {
+/*void MyRoot::addFile(string name, off_t size, mode_t mode) {
 	myFile copyfile[sizeof(files) + 1];
 	int z = 0;
 	for (int k = 0; k < (sizeof(files) + 1); k++, z++) {
@@ -11,7 +11,7 @@ void myRoot::addFile(string name, off_t size, mode_t mode) {
 	files = copyfile.clone();
 }
 
-int myRoot::deleteFile(string name) {
+int MyRoot::deleteFile(string name) {
 	myFile filetodelete = getFile(name);
 	//In Root Verzeichnis Datei loeschen
 	int i = 0;
@@ -37,14 +37,15 @@ myFile ROOT::getFile(string name) {
 	}
 	return files[i];
 }
+*/
 
 //Tanja add: i need it to have a list from all files
-myFile myRoot::getFile(int n) {
+MyFile MyRoot::getFile(int n) {
 
 	return files[n];
 }
 
-int myRoot::getFileTry(int n) {
+int MyRoot::getFileTry(int n) {
 
 	//if file exist return 0
 	// not exist return -1

@@ -4,7 +4,7 @@
 using namespace std;
 //Define the constructor
 //TODO FEHLE FINDEN
-myFile::myFile(string cname, uid_t cuser, gid_t cgroup, off_t csize, mode_t cmode, time_t clastAccess,
+MyFile::MyFile(string cname, uid_t cuser, gid_t cgroup, off_t csize, mode_t cmode, time_t clastAccess,
 		time_t clastMod, time_t clastStatusChange, int cfirstBlock) {
 	name = cname;//Dateiname
 	user = cuser;//Benutzer
@@ -16,7 +16,7 @@ myFile::myFile(string cname, uid_t cuser, gid_t cgroup, off_t csize, mode_t cmod
 	lastStatusChange = clastStatusChange;//letzter Status�nderung (ctime)
 	firstBlock = cfirstBlock;//Zeiger auf ersten Block (u_int32_t BlockNo)
 }
-myFile::~myFile() {//
+MyFile::~MyFile() {//
 	/*delete[] name;//Dateiname
 	delete[] user;//Benutzer
 	delete[] group;//Gruppen-ID
@@ -30,7 +30,7 @@ myFile::~myFile() {//
 
 //Define the constructor
 //TODO FEHLE FINDEN
-myFile::myFile() {
+MyFile::MyFile() {
 	name = "";//Dateiname
 	user = "";//Benutzer
 	group = NULL;//Gruppen-ID

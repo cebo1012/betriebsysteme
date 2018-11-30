@@ -3,7 +3,7 @@
 #include <stdlib.h>
 using namespace std;
 
-class myFile{
+class MyFile{
 private:
 	string name;//Dateiname
 	uid_t user;//Benutzer
@@ -15,12 +15,12 @@ private:
 	time_t lastStatusChange;//letzter Status�nderung (ctime)
 	int firstBlock;//Zeiger auf ersten Block
 public:
-	myFile(string cname, uid_t cuser, gid_t cgroup, off_t csize, mode_t cmode, time_t clastAccess,
+	MyFile(string cname, uid_t cuser, gid_t cgroup, off_t csize, mode_t cmode, time_t clastAccess,
 			time_t clastMod, time_t clastStatusChange, int cfirstBlock);
 
-	myFile();
+	MyFile();
 
-	~myFile();
+	~MyFile();
 	time_t getLastMod(){return lastMod;}
 	off_t getSize(){return size;}
 	int getFirstBlock(){return firstBlock;}

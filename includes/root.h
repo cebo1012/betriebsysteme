@@ -1,20 +1,21 @@
 #pragma once
 #include <string>
-#include "myFile.h"
+
+#include "MyFile.h"
 using namespace std;
-class myRoot {
+class MyRoot {
 private:
-	myFile files[BLOCK_NUMBER];
-	myFile* addressRoot;
+	MyFile files[BLOCK_NUMBER];
+	MyFile* addressRoot;
 
 public:
 	//TODO KONSTRUKTOR DESTRUKTOR
 
 	int addFile(string name, off_t size, mode_t mode);
 	int deleteFile(string name);
-	int getFile(string name, myFile* file);
+	int getFile(string name, MyFile* file);
 	int getFileTry(int number);
-	myFile getFile(int number);
+	MyFile getFile(int number);
 };
 
 

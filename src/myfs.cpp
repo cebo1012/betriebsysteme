@@ -32,9 +32,12 @@ MyFS* MyFS::Instance() {
 
 MyFS::MyFS() {
     this->logFile= stderr;
+    printf("Konstruktor von MyFS ist beendet");
 }
 
 MyFS::~MyFS() {
+
+	printf("Destruktor von MyFS ist beendet");
     
 }
 
@@ -46,7 +49,7 @@ int MyFS::fuseGetattr(const char *path, struct stat *st) {
 	//printf("[getattr] Called\n");
 	//printf("\tAttributes of %s requested\n", path);
 
-	myFile fcopy;
+	MyFile fcopy;
 	if(root.getFile(path,&fcopy)==-1)
 		{//TODO: richtigen Fehlecode zurueckgeben
 		printf("can't get file from root root.getFile(path, &fcopy)");
@@ -117,7 +120,7 @@ int MyFS::fuseUnlink(const char *path) {
 	//1 delete file from root 
 	//2 set bloks unused (change FAT, this changes are executed in Dmap.setUnused funktion)
 	
-	myFile fcopy;
+	MyFile fcopy;
 	if(root.getFile(path, &fcopy)==-1)
 		{
 		printf("can't get file from root root.getFile(path, &fcopy)");
@@ -140,7 +143,7 @@ int MyFS::fuseUnlink(const char *path) {
 			RETURN(-1);
 			}
 
-		if(dMap.setUnused(current)==-1)
+		if(dmap.setUnused(current)==-1)
 		{
 
 			printf("can't set unused in dmap dMap.setUnused(current)");
@@ -194,7 +197,7 @@ int MyFS::fuseRead(const char *path, char *buf, size_t size, off_t offset, struc
 
 	char * buffer;
 	
-	myFile fcopy;
+	MyFile fcopy;
 	if(root.getFile(path, &fcopy)==-1)
 	{
 			RETURN(-1);
@@ -341,13 +344,17 @@ int MyFS::addFile(const char * name, mode_t mode, off_t size)
 	int blocksNumber = ceil(size / BD_BLOCK_SIZE);
 	int*  blocks = new int[blocksNumber+1];
 	blocks[blocksNumber + 1] = 0;
-	if (dMap.getFreeBlocks(blocksNumber, &blocks) == 0)
+	if (dmap.getFreeBlocks(blocksNumber, &blocks) == 0)
 	{
 		root.addFile(name, size, mode);
 		for (int i = 1; i <= blocksNumber; i++)
 		{
-			dMap.setUsed(i);
-			fat.link(blocks[i], blocks[i+1]);
+			dmap.setUsed(i);
+			if(fat.link(blocks[i], &blocks[i+1])==-1)
+				{
+				RETURN(-1);
+				printf("error in addFile in fat.link(blocks[i], &blocks[i+1] ");
+				}
 
 			//char *buffer; // wofuer brauchen wir buffer hier
 		    if( this->blocks.write(i, "try")==-1)
@@ -368,7 +375,7 @@ int MyFS::addFile(const char * name, mode_t mode, off_t size)
 //int fuseUnlink(const char *path);
 int MyFS::deleteFile(const char *name)
 {
-	myFile fcopy;
+	MyFile fcopy;
 	if(root.getFile(name, &fcopy)==-1||
 	root.deleteFile(name)==-1)
 	{
@@ -381,7 +388,7 @@ int MyFS::deleteFile(const char *name)
 
 	while (blocksNumber!=0&&currentBlock!=-1)
 	{
-		if(dMap.setUnused(currentBlock)==-1)
+		if(dmap.setUnused(currentBlock)==-1)
 		{
 			printf("error in deleteFile in dmap.setUnused(currentBlock)");
 			RETURN(-1);

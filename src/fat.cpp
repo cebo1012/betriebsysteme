@@ -1,6 +1,6 @@
-
-int  myFAT::unLink ( int current){ //todo fehle behandeln + header bearbeiten
-	if(*current>=size||*current<0)
+#include "fat.h"
+int  MyFAT::unLink ( int current){ //todo fehle behandeln + header bearbeiten
+	if(current>=size||current<0)
 	return-1;
 	else
 	table[current]=-1;
@@ -8,17 +8,17 @@ int  myFAT::unLink ( int current){ //todo fehle behandeln + header bearbeiten
 
 }
 
- int myFAT::link (int current, int next) {
+ int MyFAT::link (int current, int* next) {
 
-	 if(*next>=size||*next<0||*current>=size||*current<0)
+	 if(*next>=size||*next<0||current>=size||current<0)
 	 return-1;
 	 else
-	 table[current]=next;
+	 table[current]=*next;
 	 return 0;
 }
 
- int myFAT::getNext(int current, int*next) {
- 	 if(*next>=size||*next<0||*current>=size||*current<0)
+ int MyFAT::getNext(int current, int*next) {
+ 	 if(*next>=size||*next<0||current>=size||current<0)
  		 return-1;
  	 else
  		 *next=current;
@@ -26,16 +26,20 @@ int  myFAT::unLink ( int current){ //todo fehle behandeln + header bearbeiten
  }
 
 
-myFAT::myFAT()
+MyFAT::MyFAT()
 {
 
 for(int i=0;i<size;i++)
 	table[i]=-1;
 
+printf("Konstruktor von MyFat ist beendet");
+
 }
 
-myFAT::~myFAT()
+MyFAT::~MyFAT()
 {
+	for(int i=0;i<size;i++)
+		table[i]=-1;
 
-this = new myFAT();
+	printf("Destruktor von MyFat ist beendet");
 }
