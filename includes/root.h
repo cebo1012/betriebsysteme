@@ -1,19 +1,17 @@
 #pragma once
 #include <string>
-#include <list>
+
 #include "MyFile.h"
 using namespace std;
 class MyRoot {
 private:
-	std::list<MyFile> files;
+	MyFile files[BLOCK_NUMBER];
 	MyFile* addressRoot;
 
 public:
 	//TODO KONSTRUKTOR DESTRUKTOR
-	MyRoot(myFile firstfile);
-	MyRoot(string name, off_t size, mode_t mode);
+	MyRoot();
 	~MyRoot();
-
 	int addFile(string name, off_t size, mode_t mode);
 	int deleteFile(string name);
 	int getFile(string name, MyFile* file);

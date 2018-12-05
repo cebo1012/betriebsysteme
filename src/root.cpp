@@ -1,65 +1,55 @@
-// TODO LinkedList, bibliotheken anschauen std::list
-#include <list>
-
-MyRoot::MyRoot(MyFile firstfile) {
-	file.push_front(firstfile);
-}
-MyRoot::MyRoot(string name, off_t size, mode_t mode) {
-	MyFile firstfile = new MyFile(name, size, mode);
-	file.push_front(firstfile);
-}
-MyRoot::~MyRoot() {
-	files.clear();
-}
-
-void MyRoot::addFile(string name, off_t size, mode_t mode) {
+// TODO LinkedList, bibliotheken anschauen
+/*void MyRoot::addFile(string name, off_t size, mode_t mode) {
+	myFile copyfile[sizeof(files) + 1];
+	int z = 0;
+	for (int k = 0; k < (sizeof(files) + 1); k++, z++) {
+		copyfile[z] = files[k];
+	}
 	//Speichern von Name, Dateigroesse und Zugriffsrechte pro Datei
-	MyFile f = new MyFile(name, size, mode);
-	files.push_back(f);
+	myFile f = new myFile(name, size, mode);
+	copyfile[i] = f;
+	files = copyfile.clone();
 }
 
-void MyRoot::deleteFile(string name) {
+int MyRoot::deleteFile(string name) {
+	myFile filetodelete = getFile(name);
 	//In Root Verzeichnis Datei loeschen
-	if (files.size() != 0) {
-		MyFile filetodelete = files.getFile(name);
-		files.erase(filetodelete);
+	int i = 0;
+	while (filetodelete.name != files[i].name && filetodelete.size != files[i].size && filetodelete.mode != files[i].mode) {
+		i++;
 	}
-
-}
-MyFile ROOT::getFile(string name) {
-	std::list<MyFile *>::iterator it;
-	it = files.begin();
-	while (it != files.end() || *it.name != name)
-	{
-		it++;
+	//Nachfolgende Elemente um eine Stelle nach hinten kopieren und ueberschreiben und
+	//dabei in ein anderes Array kopieren um anschlie�end die Laenge von Files zu verkuerzen
+	int indexfiles = i;
+	myFile array[sizeof(files) - 1];
+	for (int indexarray = 0; index < sizeof(files - 1) && indexarray < sizeof(array - 1); index++, indexarray++) {
+		files[index] = files[index + 1];
+		array[indexarray] = files[indexarray];
 	}
-	return *it;
+	//Laenge von Files um eins verkuerzen --- Falls Blockanzahl nicht konstant
+	//std::array<myFile,> a = { 1,2,3 };	
+return 0;
 }
-
-
+myFile ROOT::getFile(string name) {
+	int i = 0;
+	while (!(strcmp(name, files[i].name))) {
+		i++;
+	}
+	return files[i];
+}
+*/
 
 //Tanja add: i need it to have a list from all files
 MyFile MyRoot::getFile(int n) {
-	std::list<MyFile *>::iterator it;
-	it = files.begin();
-	int i = 0;
-	while (it != files.end() || i != n)
-	{
-		it++;
-		i++;
-	}
-	return *it;
-	//return files[n];
+
+	return files[n];
 }
 
 int MyRoot::getFileTry(int n) {
+
 	//if file exist return 0
-	if (files.size() >= n) {
-		return 0;
-	}
-	else {
-		return -1;
-	}
 	// not exist return -1
+	return 0;
+
 }
 
